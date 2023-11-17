@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "dockerComposeFile": [
+    "../../compose.yaml"
+  ],
+  "service": "backend",
+  "shutdownAction": "none",
+  "workspaceFolder": "/work",
+  "remoteUser": "www-data",
+  "postStartCommand": "git config --global --add safe.directory /work",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "[php]": {
+          "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+        }
+      },
+      "extensions": [
+        "oderwat.indent-rainbow",
+        "EditorConfig.EditorConfig",
+        "mhutchie.git-graph",
+        "esbenp.prettier-vscode",
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug",
+        "shufo.vscode-blade-formatter"
+      ]
+    }
+  }
+}

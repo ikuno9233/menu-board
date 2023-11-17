@@ -1,0 +1,11 @@
+FROM nginx:1.25.1-bookworm
+
+WORKDIR /work
+
+COPY ./docker-entrypoint-override.sh /usr/local/bin/docker-entrypoint-override.sh
+
+RUN chmod +x /usr/local/bin/docker-entrypoint-override.sh
+
+ENTRYPOINT [ "/usr/local/bin/docker-entrypoint-override.sh" ]
+
+CMD [ "nginx", "-g", "daemon off;" ]

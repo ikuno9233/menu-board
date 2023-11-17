@@ -1,0 +1,86 @@
+services:
+  web:
+    build:
+      context: ./containers/web
+      dockerfile: dockerfile
+    env_file:
+      - ./containers/web/env_file
+    environment:
+      - UID=${UID}
+      - GID=${GID}
+    ports:
+      - "80:80"
+    volumes:
+      - .:/work
+    depends_on:
+      backend:
+        condition: service_started
+
+  backend:
+    build:
+      context: ./containers/backend
+      dockerfile: dockerfile
+    env_file:
+      - ./containers/backend/env_file
+    environment:
+      - UID=${UID}
+      - GID=${GID}
+      - COMPOSER_ALLOW_SUPERUSER=1
+    volumes:
+      - .:/work
+    depends_on:
+      rdb:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+
+  rdb:
+    build:
+      context: ./containers/rdb
+      dockerfile: dockerfile
+    volumes:
+      - ./containers/rdb/data:/var/lib/mysql
+    env_file:
+      - ./containers/rdb/env_file
+    environment:
+      - UID=${UID}
+      - GID=${GID}
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=rdb
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "--host=localhost",
+          "--user=root",
+          "--password=root"
+        ]
+      timeout: 10s
+      retries: 10
+
+  phpmyadmin:
+    build:
+      context: ./containers/phpmyadmin
+      dockerfile: dockerfile
+    env_file:
+      - ./containers/phpmyadmin/env_file
+    environment:
+      - PMA_HOST=rdb
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    ports:
+      - "8000:80"
+    depends_on:
+      rdb:
+        condition: service_healthy
+
+  mailpit:
+    build:
+      context: ./containers/mailpit
+      dockerfile: dockerfile
+    env_file:
+      - ./containers/mailpit/env_file
+    ports:
+      - "8025:8025"
