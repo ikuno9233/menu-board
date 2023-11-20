@@ -1,6 +1,6 @@
 FROM php:8.2.7-fpm-bookworm
 
-WORKDIR /work
+WORKDIR /work/src/backend
 
 RUN usermod -s /bin/bash www-data && \
     chown www-data:www-data /var/www && \
