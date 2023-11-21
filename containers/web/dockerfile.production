@@ -1,0 +1,5 @@
+FROM nginx:1.25.1-bookworm
+
+WORKDIR /work
+
+COPY ./containers/web/production/default.conf /etc/nginx/conf.d/default.conf

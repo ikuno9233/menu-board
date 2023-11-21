@@ -1,0 +1,21 @@
+FROM php:8.2.7-fpm-bookworm
+
+WORKDIR /work/backend
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends locales vim git unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    locale-gen ja_JP.UTF-8 && \
+    localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+
+RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini && \
+    docker-php-ext-install bcmath pdo_mysql
+
+COPY --from=composer:2.5.8 /usr/bin/composer /usr/bin/composer
+COPY ./containers/backend/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY ./containers/backend/production/zzz-docker.conf /usr/local/etc/php-fpm.d/zzz-docker.conf
+
+COPY ./src/backend /work/backend
+
+CMD [ "php-fpm", "--allow-to-run-as-root" ]

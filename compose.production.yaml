@@ -1,0 +1,56 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./containers/web/dockerfile.production
+    env_file:
+      - ./containers/web/env_file
+    ports:
+      - "80:80"
+    volumes:
+      - backend_src:/work/backend
+    depends_on:
+      backend:
+        condition: service_started
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./containers/backend/dockerfile.production
+    env_file:
+      - ./containers/backend/env_file
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+    volumes:
+      - backend_src:/work
+    depends_on:
+      rdb:
+        condition: service_healthy
+
+  rdb:
+    build:
+      context: .
+      dockerfile: ./containers/rdb/dockerfile.production
+    volumes:
+      - rdb_data:/var/lib/mysql
+    env_file:
+      - ./containers/rdb/env_file
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=rdb
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "--host=localhost",
+          "--user=root",
+          "--password=root"
+        ]
+      timeout: 10s
+      retries: 10
+
+volumes:
+  backend_src:
+  rdb_data:

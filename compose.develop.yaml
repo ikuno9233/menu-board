@@ -2,7 +2,7 @@ services:
   web:
     build:
       context: ./containers/web
-      dockerfile: dockerfile
+      dockerfile: dockerfile.develop
     env_file:
       - ./containers/web/env_file
     environment:
@@ -19,7 +19,7 @@ services:
   backend:
     build:
       context: ./containers/backend
-      dockerfile: dockerfile
+      dockerfile: dockerfile.develop
     env_file:
       - ./containers/backend/env_file
     environment:
@@ -37,7 +37,7 @@ services:
   rdb:
     build:
       context: ./containers/rdb
-      dockerfile: dockerfile
+      dockerfile: dockerfile.develop
     volumes:
       - ./containers/rdb/data:/var/lib/mysql
     env_file:

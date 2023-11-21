@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "dockerComposeFile": [
-    "../../compose.yaml"
+    "../../compose.develop.yaml"
   ],
   "service": "backend",
   "shutdownAction": "none",
